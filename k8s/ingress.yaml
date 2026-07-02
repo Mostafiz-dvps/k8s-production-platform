@@ -1,0 +1,28 @@
+# Only the frontend is exposed externally through this Ingress.
+# The backend remains ClusterIP-only and is reachable only from inside the cluster,
+# such as from the frontend service or any workload using internal Kubernetes DNS.
+#
+# In production, pair this Ingress with cert-manager for automatic TLS certificates.
+# Example annotation (commented out intentionally):
+# cert-manager.io/cluster-issuer: letsencrypt-prod
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: frontend-ingress
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    # Rewrite is not required for this simple root path routing case, so it is omitted.
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: app.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 80
