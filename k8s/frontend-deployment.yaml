@@ -20,7 +20,12 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: ghcr.io/<your-ghcr-username-or-org>/frontend:latest
+          # Image tag is pinned to a specific version (v1.0.0) rather than "latest"
+          # to ensure deployments are reproducible and rollbacks are predictable.
+          # In the real CI/CD pipeline (see .github/workflows/deploy.yml), this tag
+          # would be dynamically set to the git commit SHA at build time and
+          # substituted here via Kustomize, Helm, or a sed/CI step before `kubectl apply`.
+          image: ghcr.io/mostafiz-dvps/frontend:v1.0.0
           ports:
             - containerPort: 80
           env:
