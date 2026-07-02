@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>K8s Production Platform Frontend</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="page">
+      <section class="panel">
+        <div class="panel__header">
+          <div>
+            <p class="eyebrow">Frontend status dashboard</p>
+            <h1>K8s Production Platform</h1>
+            <p class="subtitle">
+              This static frontend calls the backend root and health endpoints when the page loads.
+            </p>
+          </div>
+          <div class="backend-badge" id="backend-url">Backend: loading…</div>
+        </div>
+
+        <div id="status-banner" class="status-banner status-banner--loading">
+          Loading backend responses…
+        </div>
+
+        <div class="cards">
+          <article class="card">
+            <h2>GET /</h2>
+            <p class="endpoint-label" id="root-endpoint-label">Requesting…</p>
+            <pre id="root-response" class="response-box">Loading…</pre>
+          </article>
+
+          <article class="card">
+            <h2>GET /health</h2>
+            <p class="endpoint-label" id="health-endpoint-label">Requesting…</p>
+            <pre id="health-response" class="response-box">Loading…</pre>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <script src="./config.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>

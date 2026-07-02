@@ -1,0 +1,25 @@
+{
+  "name": "k8s-production-platform-backend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Express backend API for k8s-production-platform",
+  "main": "src/server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "jest --runInBand"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "express": "4.21.2"
+  },
+  "devDependencies": {
+    "jest": "29.7.0",
+    "supertest": "7.2.2"
+  },
+  "jest": {
+    "testEnvironment": "node"
+  }
+}
