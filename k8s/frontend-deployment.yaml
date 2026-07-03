@@ -30,7 +30,9 @@ spec:
             - containerPort: 80
           env:
             - name: BACKEND_URL
-              value: http://backend:8080
+              # In Kubernetes the browser stays on the public frontend hostname and calls /api/*.
+              # ingress.yaml then routes /api/* privately to the backend Service inside the cluster.
+              value: /api
           readinessProbe:
             # Readiness prevents traffic from reaching the pod until nginx is serving the site.
             httpGet:

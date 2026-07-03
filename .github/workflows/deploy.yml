@@ -56,12 +56,12 @@ jobs:
         shell: bash
         run: |
           SHORT_SHA="${GITHUB_SHA::7}"
-          OWNER_LC="${GITHUB_REPOSITORY_OWNER,,}"
-          REPO_NAME="${GITHUB_REPOSITORY#*/}"
-          BACKEND_IMAGE="ghcr.io/${OWNER_LC}/${REPO_NAME}-backend"
-          FRONTEND_IMAGE="ghcr.io/${OWNER_LC}/${REPO_NAME}-frontend"
+          RELEASE_TAG="v1.0.0"
+          BACKEND_IMAGE="ghcr.io/mostafiz-dvps/backend"
+          FRONTEND_IMAGE="ghcr.io/mostafiz-dvps/frontend"
 
           echo "short_sha=${SHORT_SHA}" >> "$GITHUB_OUTPUT"
+          echo "release_tag=${RELEASE_TAG}" >> "$GITHUB_OUTPUT"
           echo "backend_image=${BACKEND_IMAGE}" >> "$GITHUB_OUTPUT"
           echo "frontend_image=${FRONTEND_IMAGE}" >> "$GITHUB_OUTPUT"
 
@@ -69,32 +69,38 @@ jobs:
       - name: Log in to GitHub Container Registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
 
-      # Build the backend image and tag it with both latest and the short git SHA.
+      # Build the backend image and tag it with latest, a semantic release tag, and the short git SHA.
+      # The semantic tag matches the pinned Kubernetes manifests for this assessment repo,
+      # while the SHA tag preserves traceability to an exact commit.
       - name: Build backend Docker image
         run: |
           docker build \
             -t "${{ steps.meta.outputs.backend_image }}:latest" \
+            -t "${{ steps.meta.outputs.backend_image }}:${{ steps.meta.outputs.release_tag }}" \
             -t "${{ steps.meta.outputs.backend_image }}:${{ steps.meta.outputs.short_sha }}" \
             ./backend
 
-      # Build the frontend image and tag it with both latest and the short git SHA.
+      # Build the frontend image and tag it with latest, a semantic release tag, and the short git SHA.
       - name: Build frontend Docker image
         run: |
           docker build \
             -t "${{ steps.meta.outputs.frontend_image }}:latest" \
+            -t "${{ steps.meta.outputs.frontend_image }}:${{ steps.meta.outputs.release_tag }}" \
             -t "${{ steps.meta.outputs.frontend_image }}:${{ steps.meta.outputs.short_sha }}" \
             ./frontend
 
-      # Push both backend tags to GHCR so latest and commit-specific versions are available.
+      # Push backend tags so both the pinned semantic version and commit-specific version are available.
       - name: Push backend Docker image tags
         run: |
           docker push "${{ steps.meta.outputs.backend_image }}:latest"
+          docker push "${{ steps.meta.outputs.backend_image }}:${{ steps.meta.outputs.release_tag }}"
           docker push "${{ steps.meta.outputs.backend_image }}:${{ steps.meta.outputs.short_sha }}"
 
-      # Push both frontend tags to GHCR so latest and commit-specific versions are available.
+      # Push frontend tags so both the pinned semantic version and commit-specific version are available.
       - name: Push frontend Docker image tags
         run: |
           docker push "${{ steps.meta.outputs.frontend_image }}:latest"
+          docker push "${{ steps.meta.outputs.frontend_image }}:${{ steps.meta.outputs.release_tag }}"
           docker push "${{ steps.meta.outputs.frontend_image }}:${{ steps.meta.outputs.short_sha }}"
 
       # Create a GitHub Release named after the short git SHA; this workflow only runs on pushes to main.

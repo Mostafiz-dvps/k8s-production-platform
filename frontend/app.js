@@ -1,5 +1,8 @@
+// In local Docker Compose, BACKEND_URL points to http://localhost:8080.
+// In Kubernetes, BACKEND_URL can be set to /api so the browser stays on one public hostname
+// and ingress routes API traffic internally to the backend service.
 const defaultBackendUrl = 'http://localhost:8080';
-const backendUrl = (window.APP_CONFIG && window.APP_CONFIG.BACKEND_URL) || defaultBackendUrl;
+const apiBaseUrl = (window.APP_CONFIG && window.APP_CONFIG.BACKEND_URL) || defaultBackendUrl;
 
 const elements = {
   backendUrl: document.getElementById('backend-url'),
@@ -16,9 +19,9 @@ const setBanner = (message, variant) => {
 };
 
 const setLoadingState = () => {
-  elements.backendUrl.textContent = `Backend: ${backendUrl}`;
-  elements.rootEndpointLabel.textContent = `Fetching ${backendUrl}/`;
-  elements.healthEndpointLabel.textContent = `Fetching ${backendUrl}/health`;
+  elements.backendUrl.textContent = `Backend: ${apiBaseUrl}`;
+  elements.rootEndpointLabel.textContent = `Fetching ${apiBaseUrl}/`;
+  elements.healthEndpointLabel.textContent = `Fetching ${apiBaseUrl}/health`;
   elements.rootResponse.textContent = 'Loading…';
   elements.healthResponse.textContent = 'Loading…';
   setBanner('Loading backend responses…', 'loading');
@@ -43,7 +46,7 @@ const fetchJson = async (url) => {
 };
 
 const setErrorState = (error) => {
-  const message = `Unable to reach backend at ${backendUrl}. ${error.message}`;
+  const message = `Unable to reach backend at ${apiBaseUrl}. ${error.message}`;
   setBanner(message, 'error');
   elements.rootResponse.textContent = message;
   elements.healthResponse.textContent = message;
@@ -54,8 +57,8 @@ const loadBackendStatus = async () => {
 
   try {
     const [rootResponse, healthResponse] = await Promise.all([
-      fetchText(`${backendUrl}/`),
-      fetchJson(`${backendUrl}/health`),
+      fetchText(`${apiBaseUrl}/`),
+      fetchJson(`${apiBaseUrl}/health`),
     ]);
 
     elements.rootResponse.textContent = rootResponse;

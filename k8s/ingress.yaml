@@ -1,6 +1,7 @@
-# Only the frontend is exposed externally through this Ingress.
-# The backend remains ClusterIP-only and is reachable only from inside the cluster,
-# such as from the frontend service or any workload using internal Kubernetes DNS.
+# The browser only ever talks to one public hostname through this Ingress.
+# Requests to / go to the frontend Service, while /api and /api/* are routed internally
+# to the backend Service. The backend therefore stays private and does not need its own
+# public DNS name.
 #
 # In production, pair this Ingress with cert-manager for automatic TLS certificates.
 # Example annotation (commented out intentionally):
@@ -19,6 +20,13 @@ spec:
     - host: app.example.com
       http:
         paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: backend
+                port:
+                  number: 8080
           - path: /
             pathType: Prefix
             backend:

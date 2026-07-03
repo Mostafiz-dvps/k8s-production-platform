@@ -47,5 +47,6 @@ module "monitoring" {
 
   resource_group_name = azurerm_resource_group.platform.name
   location            = azurerm_resource_group.platform.location
+  environment         = var.environment
   aks_cluster_id      = module.aks.id
 }

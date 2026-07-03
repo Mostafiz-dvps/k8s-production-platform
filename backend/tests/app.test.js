@@ -18,4 +18,16 @@ describe('Backend API', () => {
     expect(response.body).toEqual({ status: 'ok' });
     expect(response.headers['access-control-allow-origin']).toBe('*');
   });
+
+  test('GET /api and /api/health support ingress-routed frontend requests', async () => {
+    const [rootResponse, healthResponse] = await Promise.all([
+      request(app).get('/api'),
+      request(app).get('/api/health'),
+    ]);
+
+    expect(rootResponse.status).toBe(200);
+    expect(rootResponse.text).toBe('Application is running');
+    expect(healthResponse.status).toBe(200);
+    expect(healthResponse.body).toEqual({ status: 'ok' });
+  });
 });
