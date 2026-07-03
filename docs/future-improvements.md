@@ -41,3 +41,9 @@
 - **How it helps the team or business:** The team can recover from accidental deletes, cluster failures, or bad deployments with known recovery targets.
 - **How it would be implemented:** Install Velero with Azure Blob Storage as the backup target, schedule namespace/PV backups, test restores in a non-production cluster, and document RTO/RPO per environment.
 - **What risk it reduces:** Reduces data loss, long recovery windows, and uncertainty during production incidents.
+
+## Frontend-to-Backend Networking: Local vs Kubernetes
+- In local Docker Compose, `BACKEND_URL` should point to `http://localhost:8080` because the frontend JavaScript runs in the user's browser, not inside the Docker network. The browser can reach host-exposed ports, but it cannot resolve the Docker-internal service name `backend`.
+- The same rule applies in Kubernetes: the browser is outside the cluster network, so it cannot resolve internal service DNS names such as `http://backend:8080`. Kubernetes Service DNS only works for workloads running inside the cluster.
+- The cleaner production pattern is to serve both frontend and API behind the same public Ingress hostname. For example, `/` routes to the frontend Service and `/api/*` routes to the backend Service, so the browser only talks to one public origin.
+- This should be treated as a planned refinement for `k8s/ingress.yaml`: add a path-based `/api` rule to the backend Service and update the frontend to call relative URLs such as `/api/health` instead of an absolute backend URL. That keeps the backend private behind the Ingress and avoids exposing a separate public backend hostname.
