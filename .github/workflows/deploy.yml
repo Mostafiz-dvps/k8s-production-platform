@@ -126,6 +126,6 @@ jobs:
       contents: read
 
     steps:
-      # Mock the deployment stage by showing which backend and frontend image tags would be deployed.
+      # Mock the deployment stage by showing the semantic image tags pinned in the Kubernetes manifests.
       - name: Echo mock deployment message
-        run: echo "Deploying backend:${{ needs.build-and-push.outputs.image_tag }} and frontend:${{ needs.build-and-push.outputs.image_tag }} to Kubernetes cluster"
+        run: echo "Deploying ghcr.io/mostafiz-dvps/backend:v1.0.0 and ghcr.io/mostafiz-dvps/frontend:v1.0.0 to Kubernetes cluster"

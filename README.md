@@ -62,7 +62,7 @@ The workflow in `.github/workflows/deploy.yml` currently runs on pushes to `main
 It performs three main stages:
 
 1. **Test**: installs backend dependencies and runs the backend test suite.
-2. **Build and push**: builds backend and frontend Docker images, tags them with `latest` and the short git SHA, and pushes them to GHCR.
+2. **Build and push**: builds backend and frontend Docker images, tags them with `latest`, the semantic version `v1.0.0`, and the short git SHA, and pushes them to GHCR.
 3. **Mock deploy**: prints the image tags that would be deployed to Kubernetes; this is intentionally a placeholder for a future real deployment step.
 
 ## Kubernetes Deployment
